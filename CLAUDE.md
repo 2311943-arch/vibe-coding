@@ -124,7 +124,9 @@
   정확도, 타브 물리적 연주 가능 비율)로 결정한다. 추측으로 확정하지 않는다.
 - 새 분석 단계를 추가할 때는 상태 값, 오류 코드, 부분 성공 처리 방식을 함께 정의한다.
 - API 응답 스키마는 Pydantic(백엔드)과 TypeScript 타입(프론트)을 일치시킨다.
-- 코드를 작성하기 시작하면 이 문서의 "빌드/테스트 명령" 섹션을 채운다. (아직 없음)
+- 명령어나 구조가 바뀌면 "빌드/테스트 명령" 섹션을 함께 갱신한다.
+- 프론트엔드는 Nuxt 4(Vue)로 결정했다. 위 기술 스택 표의 Next.js/shadcn/TanStack Query/VexFlow는 Nuxt 기준으로
+  읽는다(CSS 변수 토큰, `useFetch`, 자체 SVG 악보 렌더러 등).
 
 ## UI 디자인 가이드 (Airbnb 디자인 시스템 참고)
 
@@ -207,7 +209,20 @@ Airbnb 디자인 시스템을 시각적 기준으로 삼는다. 흰 바탕, 진�
 
 ## 빌드/테스트 명령
 
-_아직 코드가 없습니다. 프로젝트를 초기화하면 여기에 실행·테스트·린트 명령을 추가하세요._
+```bash
+# 1단계 평가 하니스 (Python 3.11+, numpy/scipy/pytest, ffmpeg 필요)
+cd analysis && python -m pytest -q
+cd analysis && python -m tabeval.run_eval --synthetic --out reports/   # 합성음 동작 확인
+
+# 웹 (Nuxt 4)
+npm install          # postinstall에서 nuxt prepare 실행
+npm run dev
+npm run test:logic   # 공유 유틸·데모 API 로직 테스트 (Node 22.6+, Nuxt 설치 불필요)
+```
+
+- 데모 API: 링크 경로에 `fail`/`partial`이 들어가면 실패·부분 성공 상태를 볼 수 있다.
+  응답의 `is_demo: true`는 실제 분석이 아닌 샘플 악보라는 뜻이다.
+- 진행 상황은 `docs/ROADMAP.md` 참고(PRD Phase 0~4 = 1~5단계).
 
 ## 미확정 사항
 

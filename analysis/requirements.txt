@@ -1,0 +1,7 @@
+numpy
+scipy
+pytest
+
+# 선택: 실제 전사 모델 평가용 (설치 후 tabeval/adapters.py가 자동으로 사용)
+# basic-pitch
+# demucs

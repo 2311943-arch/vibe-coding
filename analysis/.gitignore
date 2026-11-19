@@ -1,0 +1,9 @@
+__pycache__/
+.pytest_cache/
+reports/
+samples/*.wav
+samples/*.mp3
+samples/*.mp4
+samples/*.m4a
+samples/manifest.json
+samples/*.ref.json
