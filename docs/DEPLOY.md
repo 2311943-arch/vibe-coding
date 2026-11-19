@@ -2,6 +2,16 @@
 
 웹(Nuxt 4)은 Vercel에 그대로 배포됩니다(별도 설정 파일 불필요). Python 분석 서버는 Vercel이 아니라 별도 Docker 서버로 운영합니다(PRD 3장).
 
+## 서비스 구성 (`vercel.json`)
+
+Vercel services 모드로, 서비스는 Nuxt 웹 `app` 하나이며 모든 경로(`/(.*)`)를 공개합니다. 서비스 간 바인딩은 없습니다.
+
+- `analysis/`(1단계 평가 도구)는 웹 서버가 없는 오프라인 CLI이고 FFmpeg·대형 모델을 쓰므로 Vercel에 올리지 않습니다.
+  실제 분석 서버는 PRD대로 별도 Docker 서버(FastAPI + Celery)로 운영합니다.
+- `engine/`(2단계 악보 엔진)은 웹 진입점이 없는 Python 라이브러리라 지금은 서비스가 아닙니다.
+  나중에 타브 변환 API를 붙이면 `services`에 내부 서비스로 추가하고, `app`에
+  `{ "type": "service", "service": "engine", "format": "url", "env": "ENGINE_URL" }` 바인딩을 선언해 `process.env.ENGINE_URL`로 호출합니다.
+
 ## 왜 Redis가 필요한가
 
 Vercel의 서버 함수는 요청마다 다른 인스턴스에서 실행될 수 있고 메모리를 공유하지 않습니다.
