@@ -218,8 +218,12 @@ cd analysis && python -m tabeval.run_eval --synthetic --out reports/   # 합성�
 npm install          # postinstall에서 nuxt prepare 실행
 npm run dev
 npm run test:logic   # 공유 유틸·데모 API 로직 테스트 (Node 22.6+, Nuxt 설치 불필요)
+npm run typecheck    # vue-tsc 타입 검사
 ```
 
+- 화면: `app/pages/index.vue`(링크 입력) → `app/pages/analyses/[id]/index.vue`(진행, 1.5초 간격 상태 조회)
+  → `app/pages/analyses/[id]/result.vue`(결과, `app/components/SheetRow.vue`가 코드 띠 + TAB을 SVG로 그림).
+  작업 접근 토큰은 URL에 넣지 않고 sessionStorage에만 둔다(`app/composables/useJobAccess.ts`).
 - 데모 API: 링크 경로에 `fail`/`partial`이 들어가면 실패·부분 성공 상태를 볼 수 있다.
   응답의 `is_demo: true`는 실제 분석이 아닌 샘플 악보라는 뜻이다.
 - 진행 상황은 `docs/ROADMAP.md` 참고(PRD Phase 0~4 = 1~5단계).

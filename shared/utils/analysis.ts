@@ -45,7 +45,7 @@ export const ERROR_MESSAGES: Record<string, { title: string; hint: string }> = {
 }
 
 export function errorMessageFor(code: string | null): { title: string; hint: string } {
-  return (code && ERROR_MESSAGES[code]) || ERROR_MESSAGES.ANALYSIS_FAILED
+  return (code && ERROR_MESSAGES[code]) || ERROR_MESSAGES.ANALYSIS_FAILED!
 }
 
 /** 데모 API에서 단계 하나가 유지되는 시간(ms) */
