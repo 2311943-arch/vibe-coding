@@ -19,7 +19,20 @@ export default defineEventHandler(async (event): Promise<CreateAnalysisResponse>
     })
   }
 
-  const created = createJob(checked.url)
+  // Apify로 영상을 확인하는 설정이 켜져 있으면, 분석 권한이 있다는 확인을 받아야 한다(PRD 5, 8장).
+  const apifyConfig = readApifyConfig(event)
+  if (apifyConfig && body.rights_confirmed !== true) {
+    throw createError({
+      statusCode: 400,
+      statusMessage: 'Bad Request',
+      data: {
+        error_code: 'RIGHTS_NOT_CONFIRMED',
+        message: '직접 올렸거나 사용 허락을 받은 영상만 분석할 수 있어요. 권한을 확인해 주세요.',
+      },
+    })
+  }
+
+  const created = createJob(checked.url, apifyConfig)
   if ('error' in created) {
     throw createError({
       statusCode: 503,

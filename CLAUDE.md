@@ -99,6 +99,11 @@
 - 미디어는 격리 저장소에 두고 실행 파일로 취급하지 않는다. 임시 데이터는 만료 후 삭제.
 - 사용자 식별정보 수집 최소화. 외부 AI 제공업체로 미디어를 보내는 경우 보관·학습 정책을
   확인하고 사용자에게 고지한다.
+- 인스타그램 영상 확인은 Apify Instagram Scraper(`apify~instagram-scraper`)로 한다(`server/utils/apify.ts`).
+  공개 게시물만 대상이며 로그인·쿠키·세션은 다루지 않는다. 토큰은 `NUXT_APIFY_TOKEN`(서버 전용, 커밋 금지).
+  꺼져 있는 것이 기본이고, 켜면 `rights_confirmed: true` 없이는 작업을 만들 수 없다. 액터가 준 영상 주소는
+  https + Instagram CDN 호스트만 허용한다. 서드파티 스크래퍼 사용은 플랫폼 약관·비용 위험이 있으므로 업로드 대체
+  경로를 계속 준비하고, 접근 실패는 우회하지 않고 실패로 처리한다.
 
 ## MVP 범위
 
@@ -214,13 +219,16 @@ Airbnb 디자인 시스템을 시각적 기준으로 삼는다. 흰 바탕, 진�
 cd analysis && python -m pytest -q
 cd analysis && python -m tabeval.run_eval --synthetic --out reports/   # 합성음 동작 확인
 
+# 2단계 악보 데이터 엔진 (Python, pydantic 필요)
+cd engine && python -m pytest -q
+
 # 웹 (Nuxt 4)
 npm install          # postinstall에서 nuxt prepare 실행
 npm run dev
 npm run test:logic   # 공유 유틸·데모 API 로직 테스트 (Node 22.6+, Nuxt 설치 불필요)
 ```
 
-- 데모 API: 링크 경로에 `fail`/`partial`이 들어가면 실패·부분 성공 상태를 볼 수 있다.
+- 데모 API: 링크 경로에 `fail`/`partial`이 들어가면 실패·부분 성공 상태를 볼 수 있다(Apify를 켜지 않았을 때만).
   응답의 `is_demo: true`는 실제 분석이 아닌 샘플 악보라는 뜻이다.
 - 진행 상황은 `docs/ROADMAP.md` 참고(PRD Phase 0~4 = 1~5단계).
 

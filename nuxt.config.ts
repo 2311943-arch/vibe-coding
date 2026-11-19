@@ -24,4 +24,13 @@ export default defineNuxtConfig({
       ],
     },
   },
+  // 서버 전용 설정(public 아래가 아니므로 브라우저로 나가지 않는다).
+  // 환경변수: NUXT_APIFY_TOKEN, NUXT_APIFY_ACTOR_ID, NUXT_APIFY_TIMEOUT_MS. 토큰이 비어 있으면 데모 모드.
+  runtimeConfig: {
+    apify: {
+      token: '',
+      actorId: 'apify~instagram-scraper',
+      timeoutMs: 120000,
+    },
+  },
 })

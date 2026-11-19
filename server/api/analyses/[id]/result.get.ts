@@ -18,5 +18,5 @@ export default defineEventHandler((event): AnalysisResult => {
     })
   }
 
-  return buildDemoResult(job.id, current.status === 'PARTIAL' ? 'partial' : 'ok')
+  return buildDemoResult(job.id, current.status === 'PARTIAL' ? 'partial' : 'ok', job.media.state === 'ready')
 })

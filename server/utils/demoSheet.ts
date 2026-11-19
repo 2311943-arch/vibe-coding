@@ -13,7 +13,11 @@ const STEP_SECONDS = 0.25
 // 낮은 줄부터 센 순번으로 어떤 줄을 칠지 (모든 코드에 줄이 4개 이상 있다)
 const PATTERN = [0, 1, 2, 3, 2, 1, 2, 3]
 
-export function buildDemoResult(jobId: string, scenario: 'ok' | 'partial'): AnalysisResult {
+export function buildDemoResult(
+  jobId: string,
+  scenario: 'ok' | 'partial',
+  mediaChecked = false,
+): AnalysisResult {
   const chords: ChordEvent[] = []
   const tab: TabNote[] = []
 
@@ -80,7 +84,10 @@ export function buildDemoResult(jobId: string, scenario: 'ok' | 'partial'): Anal
           reason: '코드 후보가 여러 개로 갈려 확정하지 못했어요.',
         },
       ],
-      note: null,
+      // 영상 주소는 실제로 확인했더라도, 분석 엔진이 아직 없어서 악보는 샘플이다.
+      note: mediaChecked
+        ? '영상은 확인했지만 분석 엔진이 아직 연결되지 않아 샘플 악보를 보여 드려요.'
+        : null,
     },
   }
 }
