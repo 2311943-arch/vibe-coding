@@ -1,7 +1,7 @@
 # CLAUDE.md
 
 이 파일은 이 저장소에서 작업하는 Claude에게 프로젝트 맥락과 규칙을 알려 줍니다.
-(PRD v0.2 기준으로 작성됨. 현재 저장소에는 코드가 없고, 설계 문서만 존재함.)
+(PRD v0.2 기준으로 작성됨. 프론트엔드는 PRD의 Next.js 대신 Nuxt 4(Vue)로 결정했다.)
 
 ## 프로젝트 개요
 
@@ -24,8 +24,8 @@
 
 | 영역 | 기술 |
 |---|---|
-| 프론트엔드 | Next.js, TypeScript, Tailwind CSS, shadcn/ui, TanStack Query |
-| 악보 렌더링 | VexFlow (코드·TAB 우선, 정교한 오선보는 후속) |
+| 프론트엔드 | Nuxt 4 (Vue 3), TypeScript, CSS 변수 디자인 토큰(`app/assets/css/main.css`), `useFetch`/`$fetch` |
+| 악보 렌더링 | 자체 SVG 악보 렌더러 (코드·TAB 우선, 정교한 오선보는 후속) |
 | 백엔드 | Python, FastAPI, Pydantic |
 | 비동기 작업 | Celery + Redis |
 | DB / 저장소 | PostgreSQL, S3 호환 임시 오브젝트 스토리지 |
@@ -39,13 +39,13 @@
 ## 아키텍처
 
 ```
-브라우저 → Next.js → FastAPI ─ PostgreSQL
+브라우저 → Nuxt → FastAPI ─ PostgreSQL
                         │
                         └→ Redis + Celery Worker
                              미디어 검증 → FFmpeg 전처리 → 음원 분리
                              → 음표 전사 → 코드 추정/MIDI 후처리
                              → 줄·프렛 배치 → 결과 검증 → 저장
-→ Next.js 결과 화면 + VexFlow
+→ Nuxt 결과 화면 + 자체 SVG 악보 렌더러
 ```
 
 - 프론트엔드와 Python 분석 서버는 분리한다.
@@ -130,14 +130,14 @@
 - 새 분석 단계를 추가할 때는 상태 값, 오류 코드, 부분 성공 처리 방식을 함께 정의한다.
 - API 응답 스키마는 Pydantic(백엔드)과 TypeScript 타입(프론트)을 일치시킨다.
 - 명령어나 구조가 바뀌면 "빌드/테스트 명령" 섹션을 함께 갱신한다.
-- 프론트엔드는 Nuxt 4(Vue)로 결정했다. 위 기술 스택 표의 Next.js/shadcn/TanStack Query/VexFlow는 Nuxt 기준으로
-  읽는다(CSS 변수 토큰, `useFetch`, 자체 SVG 악보 렌더러 등).
+- 프론트엔드는 Nuxt 4(Vue)다. PRD에 나오는 Next.js/shadcn/TanStack Query/VexFlow는 위 기술 스택 표의
+  Nuxt 대응 항목(CSS 변수 토큰, `useFetch`, 자체 SVG 악보 렌더러)으로 바꿔 읽는다.
 
 ## UI 디자인 가이드 (Airbnb 디자인 시스템 참고)
 
 Airbnb 디자인 시스템을 시각적 기준으로 삼는다. 흰 바탕, 진한 잉크색 텍스트, 단 하나의 강조색,
-둥근 모서리, 그림자 한 단계라는 원칙을 따른다. 아래 토큰은 `tailwind.config`의 theme에
-등록해 사용한다. 값은 Airbnb 원본이며, 자체 브랜드 색을 정하면 `primary` 계열만 교체한다.
+둥근 모서리, 그림자 한 단계라는 원칙을 따른다. 아래 토큰은 `app/assets/css/main.css`의
+CSS 변수(`:root`)로 등록해 사용한다. 값은 Airbnb 원본이며, 자체 브랜드 색을 정하면 `primary` 계열만 교체한다.
 
 ### 색상 토큰
 
@@ -226,8 +226,12 @@ cd engine && python -m pytest -q
 npm install          # postinstall에서 nuxt prepare 실행
 npm run dev
 npm run test:logic   # 공유 유틸·데모 API 로직 테스트 (Node 22.6+, Nuxt 설치 불필요)
+npm run typecheck    # vue-tsc 타입 검사
 ```
 
+- 화면: `app/pages/index.vue`(링크 입력) → `app/pages/analyses/[id]/index.vue`(진행, 1.5초 간격 상태 조회)
+  → `app/pages/analyses/[id]/result.vue`(결과, `app/components/SheetRow.vue`가 코드 띠 + TAB을 SVG로 그림).
+  작업 접근 토큰은 URL에 넣지 않고 sessionStorage에만 둔다(`app/composables/useJobAccess.ts`).
 - 데모 API: 링크 경로에 `fail`/`partial`이 들어가면 실패·부분 성공 상태를 볼 수 있다(Apify를 켜지 않았을 때만).
   응답의 `is_demo: true`는 실제 분석이 아닌 샘플 악보라는 뜻이다.
 - 진행 상황은 `docs/ROADMAP.md` 참고(PRD Phase 0~4 = 1~5단계).
