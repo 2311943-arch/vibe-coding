@@ -19,6 +19,8 @@ export type SourceType = 'instagram_url' | 'upload'
 export interface CreateAnalysisRequest {
   source_type: SourceType
   source_url: string
+  /** 직접 올렸거나 사용 허락을 받은 영상임을 확인했는지. 실제 영상 확인(Apify)이 켜져 있으면 true여야 한다. */
+  rights_confirmed?: boolean
 }
 
 export interface CreateAnalysisResponse {

@@ -33,12 +33,19 @@ export function loadJobAccess(jobId: string): JobAccess | null {
 
 const memory = new Map<string, JobAccess>()
 
-/** 분석 작업을 만들고 토큰을 저장한 뒤 job_id를 돌려준다. 실패하면 사용자에게 보여 줄 문구를 던진다. */
+/**
+ * 분석 작업을 만들고 토큰을 저장한 뒤 job_id를 돌려준다. 실패하면 사용자에게 보여 줄 문구를 던진다.
+ * 호출하는 화면은 사용자가 "분석 권한이 있다"고 확인한 뒤에만 부른다(화면 1 체크박스, 같은 링크 재시도).
+ */
 export async function startAnalysis(sourceUrl: string): Promise<string> {
   try {
     const res = await $fetch<CreateAnalysisResponse>('/api/analyses', {
       method: 'POST',
-      body: { source_type: 'instagram_url', source_url: sourceUrl } satisfies CreateAnalysisRequest,
+      body: {
+        source_type: 'instagram_url',
+        source_url: sourceUrl,
+        rights_confirmed: true,
+      } satisfies CreateAnalysisRequest,
     })
     saveJobAccess(res.job_id, { token: res.access_token, sourceUrl })
     return res.job_id
