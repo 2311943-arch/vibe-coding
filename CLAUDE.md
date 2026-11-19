@@ -232,6 +232,9 @@ npm run typecheck    # vue-tsc 타입 검사
 - 화면: `app/pages/index.vue`(링크 입력) → `app/pages/analyses/[id]/index.vue`(진행, 1.5초 간격 상태 조회)
   → `app/pages/analyses/[id]/result.vue`(결과, `app/components/SheetRow.vue`가 코드 띠 + TAB을 SVG로 그림).
   작업 접근 토큰은 URL에 넣지 않고 sessionStorage에만 둔다(`app/composables/useJobAccess.ts`).
+- 작업 저장소: `server/utils/jobStore.ts`. `KV_REST_API_URL`/`KV_REST_API_TOKEN`(또는 `UPSTASH_REDIS_REST_*`)이 있으면
+  Upstash Redis, 없으면 메모리. Vercel은 인스턴스끼리 메모리를 공유하지 않으므로 배포 시 Redis가 필수다.
+  응답 뒤에 이어지는 작업(Apify 확인)은 `waitUntil`(`@vercel/functions`)로 넘긴다. 배포 절차는 `docs/DEPLOY.md`.
 - 데모 API: 링크 경로에 `fail`/`partial`이 들어가면 실패·부분 성공 상태를 볼 수 있다(Apify를 켜지 않았을 때만).
   응답의 `is_demo: true`는 실제 분석이 아닌 샘플 악보라는 뜻이다.
 - 진행 상황은 `docs/ROADMAP.md` 참고(PRD Phase 0~4 = 1~5단계).

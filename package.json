@@ -1,6 +1,9 @@
 {
   "name": "guitar-tab-ai",
   "private": true,
+  "engines": {
+    "node": "22.x"
+  },
   "type": "module",
   "scripts": {
     "dev": "nuxt dev",
@@ -12,6 +15,7 @@
     "test:logic": "node --experimental-strip-types --test tests/*.test.ts"
   },
   "dependencies": {
+    "@vercel/functions": "^3.11.3",
     "nuxt": "^4.0.0",
     "vue": "latest",
     "vue-router": "latest"
