@@ -6,7 +6,8 @@
 - 개발 단계와 현재 상태: [`docs/ROADMAP.md`](docs/ROADMAP.md)
 - 1단계 기술 타당성 검증 하니스: [`analysis/`](analysis/README.md)
 - 2단계 악보 데이터 엔진(스키마, 줄·프렛 변환): [`engine/`](engine/README.md)
-- Apify 영상 확인 설정: [`.env.example`](.env.example)
+- Apify 영상 확인·작업 저장소 설정: [`.env.example`](.env.example)
+- Vercel 배포 방법: [`docs/DEPLOY.md`](docs/DEPLOY.md)
 - 웹(Nuxt 4): `app/`, `server/`, `shared/`
 
 현재 웹의 분석 API는 샘플 악보를 돌려주는 **데모**입니다. 실제 영상 분석은 1~3단계 이후에 연결합니다.

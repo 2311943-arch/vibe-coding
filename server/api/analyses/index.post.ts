@@ -1,3 +1,5 @@
+import { waitUntil } from '@vercel/functions'
+
 // POST /api/analyses — 분석 작업 생성
 export default defineEventHandler(async (event): Promise<CreateAnalysisResponse> => {
   const body = await readBody<Partial<CreateAnalysisRequest>>(event)
@@ -32,7 +34,7 @@ export default defineEventHandler(async (event): Promise<CreateAnalysisResponse>
     })
   }
 
-  const created = createJob(checked.url, apifyConfig)
+  const created = await withJobStore((store) => createJob(store, checked.url, apifyConfig))
   if ('error' in created) {
     throw createError({
       statusCode: 503,
@@ -40,6 +42,9 @@ export default defineEventHandler(async (event): Promise<CreateAnalysisResponse>
       data: { error_code: created.error, message: '지금은 요청이 많아요. 잠시 후 다시 시도해 주세요.' },
     })
   }
+
+  // 영상 확인은 응답 뒤에도 이어진다. Vercel에서는 waitUntil로 넘겨야 함수가 중간에 멈추지 않는다.
+  if (created.mediaDone) waitUntil(created.mediaDone)
 
   return {
     job_id: created.job.id,
